@@ -225,6 +225,9 @@ public class LoginSuccessfulActivity extends AppCompatActivity {
 			if (result != null) {
 				countDownTimer.cancel();
 				countDownTimer.start();
+				maxSecurityLevelButton.setEnabled(true);
+				mediumSecurityLevelButton.setEnabled(true);
+				lowSecurityLevelButton.setEnabled(true);
 			}
 		}
 	}
