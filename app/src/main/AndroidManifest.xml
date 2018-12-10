@@ -2,8 +2,14 @@
 <manifest xmlns:android = "http://schemas.android.com/apk/res/android"
           package = "com.labo3.sym.sym_labo3">
 
+	<uses-permission android:name = "android.permission.ACCESS_NETWORK_STATE"/>
+	<uses-permission android:name = "android.permission.INTERNET"/>
 	<uses-permission android:name = "android.permission.BLUETOOTH"/>
 	<uses-permission android:name = "android.permission.BLUETOOTH_ADMIN"/>
+	<uses-permission android:name = "android.permission.ACCESS_FINE_LOCATION"/>
+	<uses-permission android:name = "android.permission.ACCESS_COARSE_LOCATION"/>
+	<!--FIXME : quelles sont les permissions nécessaires ?-->
+
 	<uses-permission android:name = "android.permission.NFC"/>
 
 	<application
@@ -33,6 +39,8 @@
 			android:theme = "@style/AppTheme.NoActionBar">
 		</activity>
 		<activity android:name = ".NFC.NFCLoginActivity">
+		</activity>
+		<activity android:name = ".iBeacon.IBeaconActivity">
 		</activity>
 	</application>
 

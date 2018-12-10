@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import com.labo3.sym.sym_labo3.NFC.NFCLoginActivity;
+import com.labo3.sym.sym_labo3.iBeacon.IBeaconActivity;
 
 public class MainActivity extends AppCompatActivity {
 	
@@ -24,6 +25,14 @@ public class MainActivity extends AppCompatActivity {
 			@Override
 			public void onClick(View view) {
 				Intent intent = new Intent(MainActivity.this, NFCLoginActivity.class);
+				startActivity(intent);
+			}
+		});
+		
+		iBeaconButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				Intent intent = new Intent(MainActivity.this, IBeaconActivity.class);
 				startActivity(intent);
 			}
 		});

@@ -1,6 +1,5 @@
 package com.labo3.sym.sym_labo3.NFC;
 
-import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.IntentFilter;

@@ -31,4 +31,8 @@
 	<string name = "activity_nfc_login_connection_waiting_for_nfc_tag">The user email and password are correct! Scan the NFC Tag to complete the authentication.</string>
 	<string name = "activity_nfc_login_nfc_tag_scanned">Le tag NFC a bien été scanné.</string>
 	<string name = "activity_nfc_login_remaining_time_before_reset_nfc">Le tag NFC devra être rescanné dans %1$d secondes</string>
+	<string name = "activity_ibeacons_viewholder_uuid">UUID : %1$s</string>
+	<string name = "activity_ibeacons_viewholder_rssi">RSSI : %1$s</string>
+	<string name = "activity_ibeacons_viewholder_nbMajor">Major ID : %1$s</string>
+	<string name = "activity_ibeacons_viewholder_nbMinor">Minor ID : %1$s</string>
 </resources>
