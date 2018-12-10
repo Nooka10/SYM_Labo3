@@ -1,0 +1,34 @@
+<resources>
+	<string name = "app_name">SYM_Labo3</string>
+	<string name = "main_activity_nfc_login_button">NFC Login</string>
+	<string name = "main_activity_codes_barres_button">Codes-barres</string>
+	<string name = "main_activity_ibeacon_button">iBeacon</string>
+	<string name = "main_activity_capteurs_button">Capteurs</string>
+	<string name = "title_activity_nfclogin">Sign in with NFC and Login/Password</string>
+
+	<!-- Strings related to login -->
+	<string name = "prompt_email">Email</string>
+	<string name = "prompt_password">Password</string>
+	<string name = "action_sign_in_without_nfc">Sign in with password only</string>
+	<string name = "action_sign_in_with_nfc">Sign in with password AND NFC Tag</string>
+	<string name = "error_invalid_email">This email address is invalid</string>
+	<string name = "error_invalid_password">This password is too short</string>
+	<string name = "error_incorrect_password">This password is incorrect</string>
+	<string name = "error_field_required">This field is required</string>
+	<string name = "permission_rationale">"Contacts permissions are needed for providing email completions."</string>
+	<string name = "activity_nfc_activate_nfc_login_switch">Login with NFC desactivated</string>
+	<string name = "activity_nfc_login_text_email">test@sym.ch</string>
+	<string name = "activity_nfc_switch_textOn">Login with NFC activated</string>
+	<string name = "activity_nfc_switch_textOff">Login with NFC desactivated</string>
+	<string name = "title_activity_login_successful">LoginSuccessfulActivity</string>
+	<string name = "login_successful_activity_max_security_level">Max security level</string>
+	<string name = "login_successful_activity_medium_security_level">Medium security level</string>
+	<string name = "login_successful_activity_low_security_level">low security level</string>
+	<string name = "login_successful_activity_current_security_level_label">Your current security level is : %1$s</string>
+	<string name = "activity_nfc_login_textview_infos">Infos</string>
+	<string name = "activity_nfc_login_device_doesnt_support_NFC">This device doesn\'t support NFC.</string>
+	<string name = "activity_nfc_login_NFC_isnt_activated">Please activate the NFC function to be able to use it!</string>
+	<string name = "activity_nfc_login_connection_waiting_for_nfc_tag">The user email and password are correct! Scan the NFC Tag to complete the authentication.</string>
+	<string name = "activity_nfc_login_nfc_tag_scanned">Le tag NFC a bien été scanné.</string>
+	<string name = "activity_nfc_login_remaining_time_before_reset_nfc">Le tag NFC devra être rescanné dans %1$d secondes</string>
+</resources>
