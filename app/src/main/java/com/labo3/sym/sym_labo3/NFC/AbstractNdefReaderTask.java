@@ -16,7 +16,6 @@ import java.util.Arrays;
  */
 public abstract class AbstractNdefReaderTask extends AsyncTask<Tag, Void, String> {
 	private static final String TAG = "NfcDemo";
-	// FIXME: je comprend pas à quoi sert ce TAG... ?
 	
 	@Override
 	protected String doInBackground(Tag... params) {

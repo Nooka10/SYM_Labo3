@@ -35,4 +35,5 @@
 	<string name = "activity_ibeacons_viewholder_rssi">RSSI : %1$s</string>
 	<string name = "activity_ibeacons_viewholder_nbMajor">Major ID : %1$s</string>
 	<string name = "activity_ibeacons_viewholder_nbMinor">Minor ID : %1$s</string>
+	<string name = "activity_nfc_invalid_nfc_tag_message">Le message lu dans le tag est invalide</string>
 </resources>

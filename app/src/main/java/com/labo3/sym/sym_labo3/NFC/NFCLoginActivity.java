@@ -1,17 +1,9 @@
 package com.labo3.sym.sym_labo3.NFC;
 
-import android.app.Activity;
-import android.app.PendingIntent;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.nfc.NfcAdapter;
-import android.nfc.Tag;
-import android.nfc.tech.Ndef;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -23,10 +15,7 @@ import com.labo3.sym.sym_labo3.R;
  * Classe gérant l'authentification d'un utilisateur à l'aide d'un couple email/mot de passe ainsi que d'une balise NFC. Le code gérant le NFC est grandement inspiré du
  * code trouvé ici: https://code.tutsplus.com/tutorials/reading-nfc-tags-with-android--mobile-17278
  */
-public class NFCLoginActivity extends AppCompatActivity {
-	private static final String MIME_TEXT_PLAIN = "text/plain";
-	private static final String TAG = "NfcDemo";
-	
+public class NFCLoginActivity extends NFCActivity {
 	private static final String[] CREDENTIALS = new String[]{
 			"test@sym.ch:aaaaaa", "toto@tutu.com_tata", "benoit@schopfer.ch:ben", "antoine@rochat.ch:toine", "jeremie@chatillon.ch:jerem"
 	};
@@ -35,7 +24,6 @@ public class NFCLoginActivity extends AppCompatActivity {
 	private TextView emailTextView;
 	private EditText passwordEditText;
 	private TextView infosTextView;
-	private NfcAdapter nfcAdapter;
 	private Button signInButton;
 	private Switch activateNFCSwitch;
 	private CountDownTimer countDownTimerBeforeResetNFC; // timer activé lorsqu'un tag NFC valide est détecté et à la fin duquel on reset validNFCTagDetected à false
@@ -73,7 +61,6 @@ public class NFCLoginActivity extends AppCompatActivity {
 		});
 		
 		// ----------------------------------------------------- gestion NFC -----------------------------------------------------
-		nfcAdapter = NfcAdapter.getDefaultAdapter(this);
 		infosTextView = (TextView) findViewById(R.id.activity_nfc_login_textview_infos);
 		activateNFCSwitch = findViewById(R.id.activateLoginWithNFC);
 		
@@ -102,7 +89,8 @@ public class NFCLoginActivity extends AppCompatActivity {
 	 *
 	 * @return true si l'appareil prend en charge le NFC et que celui-ci est activé, false sinon.
 	 */
-	private boolean checkNFC() {
+	@Override
+	protected boolean checkNFC() {
 		if (nfcAdapter == null) { // l'appareil ne supporte pas le NFC
 			// on masque le switch permettant d'activer l'authentification par NFC
 			activateNFCSwitch.setVisibility(View.INVISIBLE);
@@ -135,7 +123,7 @@ public class NFCLoginActivity extends AppCompatActivity {
 		boolean cancel = false;
 		View focusView = null;
 		
-		// on check si l'utilsiateur a entré un mdp et s'il est valide.
+		// on check si l'utilsiateur showNFCTagContent entré un mdp et s'il est valide.
 		if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
 			passwordEditText.setError(getString(R.string.error_invalid_password));
 			focusView = passwordEditText;
@@ -164,9 +152,9 @@ public class NFCLoginActivity extends AppCompatActivity {
 				if (!activateNFCSwitch.isChecked()) { // L'authentification par NFC n'est pas activée -> on log l'utilisateur
 					startLoginSuccessfulIntent();
 				} else { // l'authentification par NFC est activée
-					if (!validNFCTagDetected) { // le tag NFC n'a pas encore été scanné ou a été scanné il y a plus de 10 secondes
+					if (!validNFCTagDetected) { // le tag NFC n'showNFCTagContent pas encore été scanné ou showNFCTagContent été scanné il y showNFCTagContent plus de 10 secondes
 						infosTextView.setText(R.string.activity_nfc_login_connection_waiting_for_nfc_tag);
-					} else { // le tag NFC a été scanné il y a moins de 10 secondes --> l'utilisateur est logué
+					} else { // le tag NFC showNFCTagContent été scanné il y showNFCTagContent moins de 10 secondes --> l'utilisateur est logué
 						startLoginSuccessfulIntent();
 					}
 				}
@@ -228,136 +216,39 @@ public class NFCLoginActivity extends AppCompatActivity {
 		return false;
 	}
 	
-	@Override
-	protected void onResume() {
-		super.onResume();
-		
-		// It's important, that the activity is in the foreground (resumed). Otherwise an IllegalStateException is thrown.
-		// Plus d'infos ici: https://code.tutsplus.com/tutorials/reading-nfc-tags-with-android--mobile-17278
-		setupForegroundDispatch();
-	}
-	
-	@Override
-	protected void onPause() {
-		// Call this before onPause, otherwise an IllegalArgumentException is thrown as well.
-		// Plus d'infos ici: https://code.tutsplus.com/tutorials/reading-nfc-tags-with-android--mobile-17278
-		stopForegroundDispatch();
-		
-		super.onPause();
-	}
-	
-	@Override
-	protected void onNewIntent(Intent intent) {
-		/*
-		 * This method gets called, when a new Intent gets associated with the current activity instance.
-		 * Instead of creating a new activity, onNewIntent will be called. For more information have a look
-		 * at the documentation.
-		 *
-		 * In our case this method gets called, when the user attaches a Tag to the device.
-		 *
-		 * Plus d'infos ici: https://code.tutsplus.com/tutorials/reading-nfc-tags-with-android--mobile-17278
-		 */
-		handleIntent(intent);
-	}
-	
-	/**
-	 * Méthode appelée lorsqu'un tag NFC est détecté.
-	 * Plus d'infos ici: https://code.tutsplus.com/tutorials/reading-nfc-tags-with-android--mobile-17278
-	 * @param intent
-	 */
-	private void handleIntent(Intent intent) {
-		String action = intent.getAction();
-		if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(action)) {
-			String type = intent.getType();
-			if (MIME_TEXT_PLAIN.equals(type)) {
-				Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-				new NdefReaderTask().execute(tag);
-			} else {
-				Log.d(TAG, "Wrong mime type: " + type);
+	protected void showNFCTagContent(String result) {
+		if (result != null && result.equals(SECRET_ID)) { // vrai si le message lu dans le tag NFC correspond au SECRET_ID (test)
+			validNFCTagDetected = true;
+			attemptLogin();
+			infosTextView.setText(R.string.activity_nfc_login_nfc_tag_scanned);
+			if (countDownTimerBeforeResetNFC == null) { // on crée le timer pour la 1ère fois
+				countDownTimerBeforeResetNFC = new CountDownTimer(10000, 1000) {
+					/**
+					 * Méthode appelée chaque seconde. Affiche le temps restant avant que le tag NFC doivent être rescanné.
+					 *
+					 * @param millisUntilFinished, le temps restant avant la fin du timer
+					 */
+					public void onTick(long millisUntilFinished) {
+						infosTextView.setText(infosTextView.getContext().getString(R.string.activity_nfc_login_remaining_time_before_reset_nfc, millisUntilFinished / 1000));
+					}
+					
+					/**
+					 * Méthode appelée lorsque le timer s'est écoulé. Le tag NFC est invalidé. Il faudra le re-scanner pour pouvoir se
+					 * connecter.
+					 */
+					public void onFinish() {
+						// 10 secondes après que le tag NFC ait été scanné, si l'utilisateur ne s'est pas loggué, il lui faudra rescanner le tag NFC.
+						infosTextView.setText("");
+						validNFCTagDetected = false;
+					}
+				};
+			} else { // un timer existe déjà -> on le réinitialise
+				countDownTimerBeforeResetNFC.cancel();
 			}
-		} else if (NfcAdapter.ACTION_TECH_DISCOVERED.equals(action)) {
-			// In case we would still use the Tech Discovered Intent
-			Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-			String[] techList = tag.getTechList();
-			String searchedTech = Ndef.class.getName();
-			for (String tech : techList) {
-				if (searchedTech.equals(tech)) {
-					new NdefReaderTask().execute(tag);
-					break;
-				}
-			}
-		}
-	}
-	
-	/**
-	 * Plus d'infos ici: https://code.tutsplus.com/tutorials/reading-nfc-tags-with-android--mobile-17278
-	 */
-	private void setupForegroundDispatch() {
-		if (nfcAdapter == null) {
-			return;
-		}
-		final Intent intent = new Intent(this.getApplicationContext(), this.getClass());
-		intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-		
-		final PendingIntent pendingIntent = PendingIntent.getActivity(this.getApplicationContext(), 0, intent, 0);
-		
-		IntentFilter[] filters = new IntentFilter[1];
-		String[][] techList = new String[][]{};
-		
-		// Notice that this is the same filter as in our manifest.
-		filters[0] = new IntentFilter();
-		filters[0].addAction(NfcAdapter.ACTION_NDEF_DISCOVERED);
-		filters[0].addCategory(Intent.CATEGORY_DEFAULT);
-		try {
-			filters[0].addDataType("text/plain");
-		} catch (IntentFilter.MalformedMimeTypeException e) {
-			Log.e(TAG, "MalformedMimeTypeException", e);
-		}
-		nfcAdapter.enableForegroundDispatch(this, pendingIntent, filters, techList);
-	}
-	
-	/**
-	 * Plus d'infos ici: https://code.tutsplus.com/tutorials/reading-nfc-tags-with-android--mobile-17278
-	 */
-	private void stopForegroundDispatch() {
-		if (nfcAdapter != null) {
-			nfcAdapter.disableForegroundDispatch(this);
-		}
-	}
-	
-	public class NdefReaderTask extends AbstractNdefReaderTask {
-		@Override
-		protected void onPostExecute(String result) {
-			if (result != null) {
-				validNFCTagDetected = true;
-				attemptLogin();
-				infosTextView.setText(R.string.activity_nfc_login_nfc_tag_scanned);
-				if (countDownTimerBeforeResetNFC == null) { // on crée le timer pour la 1ère fois
-					countDownTimerBeforeResetNFC = new CountDownTimer(10000, 1000) {
-						/**
-						 * Méthode appelée chaque seconde. Affiche le temps restant avant que le tag NFC doivent être rescanné.
-						 * @param millisUntilFinished, le temps restant avant la fin du timer
-						 */
-						public void onTick(long millisUntilFinished) {
-							infosTextView.setText(infosTextView.getContext().getString(R.string.activity_nfc_login_remaining_time_before_reset_nfc, millisUntilFinished / 1000));
-						}
-						
-						/**
-						 * Méthode appelée lorsque le timer s'est écoulé.
-						 * Le tag NFC est invalidé. Il faudra le re-scanner pour pouvoir se connecter.
-						 */
-						public void onFinish() {
-							// 10 secondes après que le tag NFC ait été scanné, si l'utilisateur ne s'est pas loggué, il lui faudra rescanner le tag NFC.
-							infosTextView.setText("");
-							validNFCTagDetected = false;
-						}
-					};
-				} else { // un timer existe déjà -> on le réinitialise
-					countDownTimerBeforeResetNFC.cancel();
-				}
-				// on démarre le timer
-				countDownTimerBeforeResetNFC.start();
-			}
+			// on démarre le timer
+			countDownTimerBeforeResetNFC.start();
+		} else {
+			infosTextView.setText(R.string.activity_nfc_invalid_nfc_tag_message);
 		}
 	}
 }

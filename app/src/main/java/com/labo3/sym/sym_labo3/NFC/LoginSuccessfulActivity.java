@@ -1,15 +1,7 @@
 package com.labo3.sym.sym_labo3.NFC;
 
-import android.app.PendingIntent;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.nfc.NfcAdapter;
-import android.nfc.Tag;
-import android.nfc.tech.Ndef;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -19,11 +11,8 @@ import com.labo3.sym.sym_labo3.R;
 /**
  * Classe gérant l'activité affichée lorsque l'utilisateur s'est correctement loggué.
  */
-public class LoginSuccessfulActivity extends AppCompatActivity {
-	private static final String MIME_TEXT_PLAIN = "text/plain";
-	private static final String TAG = "NfcDemo";
+public class LoginSuccessfulActivity extends NFCActivity {
 	
-	private NfcAdapter nfcAdapter;
 	private TextView textView;
 	private ProgressBar progressBar;
 	private Button maxSecurityLevelButton;
@@ -55,8 +44,6 @@ public class LoginSuccessfulActivity extends AppCompatActivity {
 			return name;
 		}
 	}
-	
-	//FIXME: faut-il pouvoir rehausser le niveau de sécurité en étant loggué ? -> activer le NFC dans cette activité aussi..?
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -94,7 +81,6 @@ public class LoginSuccessfulActivity extends AppCompatActivity {
 			}
 		}.start();
 		
-		nfcAdapter = NfcAdapter.getDefaultAdapter(this);
 		if (checkNFC()) { // si le NFC est disponible sur l'appareil, on configure la gestion d'un tag
 			handleIntent(getIntent());
 		}
@@ -105,7 +91,8 @@ public class LoginSuccessfulActivity extends AppCompatActivity {
 	 *
 	 * @return true si l'appareil prend en charge le NFC et que celui-ci est activé, false sinon.
 	 */
-	private boolean checkNFC() {
+	@Override
+	protected boolean checkNFC() {
 		if (nfcAdapter == null) { // l'appareil ne supporte pas le NFC
 			// on masque le switch permettant d'activer l'authentification par NFC
 			Toast.makeText(this, R.string.activity_nfc_login_device_doesnt_support_NFC, Toast.LENGTH_LONG).show();
@@ -119,115 +106,13 @@ public class LoginSuccessfulActivity extends AppCompatActivity {
 		return true;
 	}
 	
-	@Override
-	protected void onResume() {
-		super.onResume();
-		
-		// It's important, that the activity is in the foreground (resumed). Otherwise an IllegalStateException is thrown.
-		// Plus d'infos ici: https://code.tutsplus.com/tutorials/reading-nfc-tags-with-android--mobile-17278
-		setupForegroundDispatch();
-	}
-	
-	@Override
-	protected void onPause() {
-		// Call this before onPause, otherwise an IllegalArgumentException is thrown as well.
-		// Plus d'infos ici: https://code.tutsplus.com/tutorials/reading-nfc-tags-with-android--mobile-17278
-		stopForegroundDispatch();
-		
-		super.onPause();
-	}
-	
-	@Override
-	protected void onNewIntent(Intent intent) {
-		/*
-		 * This method gets called, when a new Intent gets associated with the current activity instance.
-		 * Instead of creating a new activity, onNewIntent will be called. For more information have a look
-		 * at the documentation.
-		 *
-		 * In our case this method gets called, when the user attaches a Tag to the device.
-		 *
-		 * Plus d'infos ici: https://code.tutsplus.com/tutorials/reading-nfc-tags-with-android--mobile-17278
-		 */
-		handleIntent(intent);
-	}
-	
-	/**
-	 * Méthode appelée lorsqu'un tag NFC est détecté. Plus d'infos ici: https://code.tutsplus.com/tutorials/reading-nfc-tags-with-android--mobile-17278
-	 *
-	 * @param intent
-	 */
-	private void handleIntent(Intent intent) {
-		String action = intent.getAction();
-		if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(action)) {
-			String type = intent.getType();
-			if (MIME_TEXT_PLAIN.equals(type)) {
-				Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-				new NdefReaderTask().execute(tag);
-			} else {
-				Log.d(TAG, "Wrong mime type: " + type);
-			}
-		} else if (NfcAdapter.ACTION_TECH_DISCOVERED.equals(action)) {
-			// In case we would still use the Tech Discovered Intent
-			Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-			String[] techList = tag.getTechList();
-			String searchedTech = Ndef.class.getName();
-			for (String tech : techList) {
-				if (searchedTech.equals(tech)) {
-					new NdefReaderTask().execute(tag);
-					break;
-				}
-			}
-		}
-	}
-	
-	// FIXME: doit-on faire en sorte d'éviter la dupplication de code, ou on s'en fiche pour ce labo?
-	
-	/**
-	 * Plus d'infos ici: https://code.tutsplus.com/tutorials/reading-nfc-tags-with-android--mobile-17278
-	 */
-	private void setupForegroundDispatch() {
-		if (nfcAdapter == null) {
-			return;
-		}
-		final Intent intent = new Intent(this.getApplicationContext(), this.getClass());
-		intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-		
-		final PendingIntent pendingIntent = PendingIntent.getActivity(this.getApplicationContext(), 0, intent, 0);
-		
-		IntentFilter[] filters = new IntentFilter[1];
-		String[][] techList = new String[][]{};
-		
-		// Notice that this is the same filter as in our manifest.
-		filters[0] = new IntentFilter();
-		filters[0].addAction(NfcAdapter.ACTION_NDEF_DISCOVERED);
-		filters[0].addCategory(Intent.CATEGORY_DEFAULT);
-		try {
-			filters[0].addDataType("text/plain");
-		} catch (IntentFilter.MalformedMimeTypeException e) {
-			Log.e(TAG, "MalformedMimeTypeException", e);
-		}
-		nfcAdapter.enableForegroundDispatch(this, pendingIntent, filters, techList);
-	}
-	
-	/**
-	 * Plus d'infos ici: https://code.tutsplus.com/tutorials/reading-nfc-tags-with-android--mobile-17278
-	 */
-	private void stopForegroundDispatch() {
-		if (nfcAdapter != null) {
-			nfcAdapter.disableForegroundDispatch(this);
-		}
-	}
-	
-	public class NdefReaderTask extends AbstractNdefReaderTask {
-		@Override
-		protected void onPostExecute(String result) {
-			if (result != null) {
-				countDownTimer.cancel();
-				countDownTimer.start();
-				maxSecurityLevelButton.setEnabled(true);
-				mediumSecurityLevelButton.setEnabled(true);
-				lowSecurityLevelButton.setEnabled(true);
-			}
+	protected void showNFCTagContent(String result) {
+		if (result != null && result.equals(SECRET_ID)) { // vrai si le message lu dans le tag NFC correspond au SECRET_ID (test)
+			countDownTimer.cancel();
+			countDownTimer.start();
+			maxSecurityLevelButton.setEnabled(true);
+			mediumSecurityLevelButton.setEnabled(true);
+			lowSecurityLevelButton.setEnabled(true);
 		}
 	}
 }

@@ -13,6 +13,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -43,9 +44,8 @@ public class IBeaconActivity extends AppCompatActivity implements BeaconConsumer
 		detectedIBeacons.setAdapter(new RecyclerViewAdapter());
 		
 		// on demande à l'utilisateur les permissions nécessaires
-		// FIXME: quelles sont les autorisation requises?
 		Dexter.withActivity(this).withPermissions(Manifest.permission.INTERNET, Manifest.permission.ACCESS_NETWORK_STATE, Manifest.permission.ACCESS_COARSE_LOCATION,
-				Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.BLUETOOTH, Manifest.permission.BLUETOOTH_ADMIN)
+				Manifest.permission.BLUETOOTH)
 				.withListener(new MultiplePermissionsListener() {
 					@Override
 					public void onPermissionsChecked(MultiplePermissionsReport report) {
@@ -67,7 +67,6 @@ public class IBeaconActivity extends AppCompatActivity implements BeaconConsumer
 					public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
 						token.continuePermissionRequest();
 					}
-					
 				}).check();
 		
 		beaconManager = BeaconManager.getInstanceForApplication(this);
@@ -80,7 +79,7 @@ public class IBeaconActivity extends AppCompatActivity implements BeaconConsumer
 		if (cm != null) {
 			final NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
 			if (activeNetwork == null || !activeNetwork.isConnected()) { // l'appareil n'est pas connecté à internet
-				// on affiche une popup signalant qu'on a besoin d'internet
+				// on affiche une popup signalant qu'on showNFCTagContent besoin d'internet
 				final AlertDialog.Builder builder = new AlertDialog.Builder(this);
 				builder.setTitle("Please, enable Internet connection!");
 				builder.setMessage("To be able to detect Beacons, Internet has to be enabled.");
@@ -91,7 +90,7 @@ public class IBeaconActivity extends AppCompatActivity implements BeaconConsumer
 					@TargetApi(Build.VERSION_CODES.M)
 					public void onDismiss(DialogInterface dialogInterface) {
 						// ouvre la page des paramètres permettant d'activer les données cellulaires
-						// fixme: y a-t-il un équivalent à la méthode utilisée pour bluetooth pour la connection internet?
+						// fixme: y showNFCTagContent-t-il un équivalent à la méthode utilisée pour bluetooth pour la connection internet?
 						Intent enableInternetIntent = new Intent(Settings.ACTION_DATA_ROAMING_SETTINGS);
 						startActivity(enableInternetIntent);
 					}
@@ -104,7 +103,7 @@ public class IBeaconActivity extends AppCompatActivity implements BeaconConsumer
 	private void checkIfBluetoothIsEnabled() {
 		BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 		if (!bluetoothAdapter.isEnabled()) { // le bluetooth n'est pas activé
-			// on affiche une popup signalant qu'on a besoin du Bluetooth
+			// on affiche une popup signalant qu'on showNFCTagContent besoin du Bluetooth
 			final AlertDialog.Builder builder = new AlertDialog.Builder(this);
 			builder.setTitle("Please, enable Bluetooth connection!");
 			builder.setMessage("To be able to detect Beacons, Bluetooth has to be enabled.");
@@ -114,7 +113,7 @@ public class IBeaconActivity extends AppCompatActivity implements BeaconConsumer
 				@Override
 				@TargetApi(Build.VERSION_CODES.M)
 				public void onDismiss(DialogInterface dialogInterface) {
-					// fixme: y a-t-il un équivalent pour la connection internet et la localisation?
+					// fixme: y showNFCTagContent-t-il un équivalent pour la connection internet et la localisation?
 					Intent enableBluetoothIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
 					startActivity(enableBluetoothIntent);
 				}
@@ -126,7 +125,7 @@ public class IBeaconActivity extends AppCompatActivity implements BeaconConsumer
 	private void checkIfLocationIsEnabled() {
 		LocationManager lm = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 		if (lm == null || !lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) { // la localisation GPS n'est pas activée
-			// on affiche une popup signalant qu'on a besoin de la localisation GPS
+			// on affiche une popup signalant qu'on showNFCTagContent besoin de la localisation GPS
 			final AlertDialog.Builder builder = new AlertDialog.Builder(this);
 			builder.setTitle("Please, enable location!");
 			builder.setMessage("To be able to detect Beacons, your location is needed.");
@@ -136,7 +135,7 @@ public class IBeaconActivity extends AppCompatActivity implements BeaconConsumer
 				@TargetApi(Build.VERSION_CODES.M)
 				public void onDismiss(DialogInterface dialogInterface) {
 					// ouvre la page des paramètres permettant d'activer la localisation GPS
-					// fixme: y a-t-il un équivalent à la méthode utilisée pour bluetooth pour la localisation?
+					// fixme: y showNFCTagContent-t-il un équivalent à la méthode utilisée pour bluetooth pour la localisation?
 					Intent enableInternetIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
 					startActivity(enableInternetIntent);
 				}
@@ -146,27 +145,18 @@ public class IBeaconActivity extends AppCompatActivity implements BeaconConsumer
 	}
 	
 	@Override
-	protected void onDestroy() {
-		super.onDestroy();
-		beaconManager.unbind(this);
-	}
-	
-	@Override
 	public void onBeaconServiceConnect() {
 		beaconManager.addRangeNotifier(new RangeNotifier() {
 			@Override
 			public void didRangeBeaconsInRegion(Collection<Beacon> collection, Region region) {
-				if (collection.size() > 0) {
-					final RecyclerViewAdapter adapter = (RecyclerViewAdapter) IBeaconActivity.this.detectedIBeacons.getAdapter();
-					if (adapter != null) {
-						adapter.setListIBeacons(collection);
-					}
+				final RecyclerViewAdapter adapter = (RecyclerViewAdapter) IBeaconActivity.this.detectedIBeacons.getAdapter();
+				if (adapter != null) {
+					adapter.setListIBeacons(collection);
 				}
 			}
 		});
 		
 		try {
-			// fixme: à quoi correspond ce uniqueID ?
 			beaconManager.startRangingBeaconsInRegion(new Region("myUniqueID", null, null, null));
 		} catch (RemoteException e) {
 			System.err.println(e.getMessage());
