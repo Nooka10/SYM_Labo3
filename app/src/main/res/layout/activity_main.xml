@@ -47,17 +47,17 @@
 		app:layout_constraintLeft_toLeftOf = "parent"
 		app:layout_constraintRight_toRightOf = "parent"
 		app:layout_constraintTop_toBottomOf = "@+id/mainActivity_CodesBarres"
-		app:layout_constraintBottom_toTopOf = "@+id/mainActivity_Capteurs"/>
+		app:layout_constraintBottom_toTopOf = "@+id/mainActivity_Sensors"/>
 
 	<Button
-		android:id = "@+id/mainActivity_Capteurs"
+		android:id = "@+id/mainActivity_Sensors"
 		android:layout_width = "match_parent"
 		android:layout_height = "0dp"
 		android:layout_marginLeft = "16dp"
 		android:layout_marginRight = "16dp"
 		android:layout_marginTop = "8dp"
 		android:layout_marginBottom = "16dp"
-		android:text = "@string/main_activity_capteurs_button"
+		android:text = "@string/main_activity_sensors_button"
 		app:layout_constraintLeft_toLeftOf = "parent"
 		app:layout_constraintRight_toRightOf = "parent"
 		app:layout_constraintTop_toBottomOf = "@+id/mainActivity_IBeacon" app:layout_constraintBottom_toBottomOf = "parent"/>

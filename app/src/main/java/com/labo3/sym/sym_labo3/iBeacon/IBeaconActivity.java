@@ -90,7 +90,6 @@ public class IBeaconActivity extends AppCompatActivity implements BeaconConsumer
 					@TargetApi(Build.VERSION_CODES.M)
 					public void onDismiss(DialogInterface dialogInterface) {
 						// ouvre la page des paramètres permettant d'activer les données cellulaires
-						// fixme: y showNFCTagContent-t-il un équivalent à la méthode utilisée pour bluetooth pour la connection internet?
 						Intent enableInternetIntent = new Intent(Settings.ACTION_DATA_ROAMING_SETTINGS);
 						startActivity(enableInternetIntent);
 					}
@@ -113,7 +112,6 @@ public class IBeaconActivity extends AppCompatActivity implements BeaconConsumer
 				@Override
 				@TargetApi(Build.VERSION_CODES.M)
 				public void onDismiss(DialogInterface dialogInterface) {
-					// fixme: y showNFCTagContent-t-il un équivalent pour la connection internet et la localisation?
 					Intent enableBluetoothIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
 					startActivity(enableBluetoothIntent);
 				}
@@ -135,7 +133,6 @@ public class IBeaconActivity extends AppCompatActivity implements BeaconConsumer
 				@TargetApi(Build.VERSION_CODES.M)
 				public void onDismiss(DialogInterface dialogInterface) {
 					// ouvre la page des paramètres permettant d'activer la localisation GPS
-					// fixme: y showNFCTagContent-t-il un équivalent à la méthode utilisée pour bluetooth pour la localisation?
 					Intent enableInternetIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
 					startActivity(enableInternetIntent);
 				}

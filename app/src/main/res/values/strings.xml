@@ -3,7 +3,7 @@
 	<string name = "main_activity_nfc_login_button">NFC Login</string>
 	<string name = "main_activity_codes_barres_button">Codes-barres</string>
 	<string name = "main_activity_ibeacon_button">iBeacon</string>
-	<string name = "main_activity_capteurs_button">Capteurs</string>
+	<string name = "main_activity_sensors_button">Capteurs</string>
 	<string name = "title_activity_nfclogin">Sign in with NFC and Login/Password</string>
 
 	<!-- Strings related to login -->
@@ -36,8 +36,8 @@
 	<string name = "activity_ibeacons_viewholder_nbMajor">Major ID : %1$s</string>
 	<string name = "activity_ibeacons_viewholder_nbMinor">Minor ID : %1$s</string>
 	<string name = "activity_nfc_invalid_nfc_tag_message">Le message lu dans le tag est invalide</string>
-	<string name="turn_on_flashlight">Turn on Flashlight</string>
-	<string name="turn_off_flashlight">Turn off Flashlight</string>
+	<string name = "turn_on_flashlight">Turn on Flashlight</string>
+	<string name = "turn_off_flashlight">Turn off Flashlight</string>
 	<string name = "qrcode_activity_barcode_prompt">Scan a barcode</string>
 	<string name = "qrcode_activity_title">Previous scanned QR Codes :</string>
 	<string name = "qrcode_activity_scan_qrcode_button">Scan a QR Code</string>
